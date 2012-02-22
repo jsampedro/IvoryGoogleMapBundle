@@ -27,6 +27,11 @@ class Map extends AbstractJavascriptVariableAsset
     protected $async = false;
 
     /**
+     * @var boolean TRUE if the map should include Google Map external library else FALSE
+     */
+    protected $includeGMLib = true;
+
+    /**
      * @var boolean TRUE if the map autozoom else FALSE
      */
     protected $autoZoom = false;
@@ -1120,5 +1125,19 @@ class Map extends AbstractJavascriptVariableAsset
         return $this->language;
     }
 
+        /**
+     * @param boolean $includeGMLib
+     */
+    public function setincludeGMLib($includeGMLib)
+    {
+        $this->includeGMLib = $includeGMLib;
+    }
 
+    /**
+     * @return boolean
+     */
+    public function getincludeGMLib()
+    {
+        return $this->includeGMLib;
+    }
 }
