@@ -101,7 +101,7 @@ class MarkerHelper
         else
             $markerJSONOptions .= '}';
 
-        $html[] = sprintf('var %s = new google.maps.Marker(%s);'.PHP_EOL,
+        $html[] = sprintf('%s = new google.maps.Marker(%s);'.PHP_EOL,
             $marker->getJavascriptVariable(),
             $markerJSONOptions
         );

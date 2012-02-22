@@ -302,7 +302,7 @@ class MapHelper
         else
             $mapJSONOptions .= '}';
         
-        $html[] = sprintf('var %s = new google.maps.Map(document.getElementById("%s"), %s);'.PHP_EOL,
+        $html[] = sprintf('%s = new google.maps.Map(document.getElementById("%s"), %s);'.PHP_EOL,
             $map->getJavascriptVariable(),
             $map->getHtmlContainerId(),
             $mapJSONOptions
