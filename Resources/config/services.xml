@@ -181,6 +181,7 @@
             <argument type="service" id="ivory_google_map.helper.circle" />
             <argument type="service" id="ivory_google_map.helper.ground_overlay" />
             <argument type="service" id="ivory_google_map.helper.event_manager" />
+            <argument type="service" id="router" />
         </service>
         
         <!-- Map type ID service -->

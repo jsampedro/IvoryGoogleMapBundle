@@ -26,10 +26,10 @@ class Map extends AbstractJavascriptVariableAsset
      */
     protected $async = false;
 
-    /**
-     * @var boolean TRUE if the map should include Google Map external library else FALSE
+     /**
+     * @var boolean TRUE if the map should include library to allow  address geolocation
      */
-    protected $includeGMLib = true;
+    protected $geolocable = false;
 
     /**
      * @var boolean TRUE if the map autozoom else FALSE
@@ -1125,19 +1125,19 @@ class Map extends AbstractJavascriptVariableAsset
         return $this->language;
     }
 
-        /**
-     * @param boolean $includeGMLib
+     /**
+     * @param boolean $geolocable
      */
-    public function setincludeGMLib($includeGMLib)
+    public function setGeolocable($geolocable)
     {
-        $this->includeGMLib = $includeGMLib;
+        $this->geolocable = $geolocable;
     }
 
     /**
      * @return boolean
      */
-    public function getincludeGMLib()
+    public function isGeolocable()
     {
-        return $this->includeGMLib;
+        return $this->geolocable;
     }
 }

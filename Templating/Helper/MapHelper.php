@@ -6,7 +6,6 @@ use Ivory\GoogleMapBundle\Templating\Helper\Base;
 use Ivory\GoogleMapBundle\Templating\Helper\Controls;
 use Ivory\GoogleMapBundle\Templating\Helper\Overlays;
 use Ivory\GoogleMapBundle\Templating\Helper\Events;
-
 use Ivory\GoogleMapBundle\Model\Map;
 use Ivory\GoogleMapBundle\Model\Events\Event;
 
@@ -15,48 +14,48 @@ use Ivory\GoogleMapBundle\Model\Events\Event;
  *
  * @author GeLo <geloen.eric@gmail.com>
  */
-class MapHelper
-{
+class MapHelper {
+
     /**
      * @var Ivory\GoogleMapBundle\Templating\Helper\Base\CoordinateHelper
      */
     protected $coordinateHelper;
-    
+
     /**
      * @var Ivory\GoogleMapBundle\Templating\Helper\MapTypeIdHelper
      */
     protected $mapTypeIdHelper;
-    
+
     /**
      * @var Ivory\GoogleMapBundle\Templating\Helper\Controls\MapTypeControlHelper
      */
     protected $mapTypeControlHelper;
-    
+
     /**
      * @var Ivory\GoogleMapBundle\Templating\Helper\Controls\OverviewMapControlHelper
      */
     protected $overviewMapControl;
-    
+
     /**
      * @var Ivory\GoogleMapBundle\Templating\Helper\Controls\PanControlHelper
      */
     protected $panControlHelper;
-    
+
     /**
      * @var Ivory\GoogleMapBundle\Templating\Helper\Controls\RotateControlHelper
      */
     protected $rotateControlHelper;
-    
+
     /**
      * @var Ivory\GoogleMapBundle\Templating\Helper\Controls\ScaleControlHelper
      */
     protected $scaleControlHelper;
-    
+
     /**
      * @var Ivory\GoogleMapBundle\Templating\Helper\Controls\StreetViewControlHelper
      */
     protected $streetViewControlHelper;
-    
+
     /**
      * @var Ivory\GoogleMapBundle\Templating\Helper\Controls\ZoomControlHelper
      */
@@ -81,7 +80,7 @@ class MapHelper
      * @var Ivory\GoogleMapBundle\Templating\Helper\Overlays\PolylineHelper
      */
     protected $polylineHelper;
-    
+
     /**
      * @var Ivory\GoogleMapBundle\Templating\Helper\Overlays\EncodedPolylineHelper
      */
@@ -106,12 +105,17 @@ class MapHelper
      * @var Ivory\GoogleMapBundle\Templating\Helper\Overlays\GroundOverlayHelper
      */
     protected $groundOverlayHelper;
-    
+
     /**
      * @var Ivory\GoogleMapBundle\Templating\Helper\Events\EventManagerHelper
      */
     protected $eventManagerHelper;
-    
+
+    /**
+     * @var Symfony\Bundle\FrameworkBundle\Routing\Router
+     */
+    protected $router;
+
     /**
      * Constructs a map helper
      *
@@ -133,8 +137,7 @@ class MapHelper
      * @param Ivory\GoogleMapBundle\Templating\Helper\Overlays\GroundOverlayHelper $groundOverlayHelper
      * @param Ivory\GoogleMapBundle\Templating\Helper\Events\EventManagerHelper $eventHelper
      */
-    public function __construct(Base\CoordinateHelper $coordinateHelper, MapTypeIdHelper $mapTypeIdHelper, Controls\MapTypeControlHelper $mapTypeControlHelper, Controls\OverviewMapControlHelper $overviewMapControlHelper, Controls\PanControlHelper $panControlHelper, Controls\RotateControlHelper $rotateControlHelper, Controls\ScaleControlHelper $scaleControlHelper, Controls\StreetViewControlHelper $streetViewControlHelper, Controls\ZoomControlHelper $zoomControlHelper, Overlays\MarkerHelper $markerHelper, Base\BoundHelper $boundHelper, Overlays\InfoWindowHelper $infoWindowHelper, Overlays\PolylineHelper $polylineHelper, Overlays\EncodedPolylineHelper $encodedPolylineHelper, Overlays\PolygonHelper $polygonHelper, Overlays\RectangleHelper $rectangleHelper, Overlays\CircleHelper $circleHelper, Overlays\GroundOverlayHelper $groundOverlayHelper, Events\EventManagerHelper $eventManagerHelper)
-    {
+    public function __construct(Base\CoordinateHelper $coordinateHelper, MapTypeIdHelper $mapTypeIdHelper, Controls\MapTypeControlHelper $mapTypeControlHelper, Controls\OverviewMapControlHelper $overviewMapControlHelper, Controls\PanControlHelper $panControlHelper, Controls\RotateControlHelper $rotateControlHelper, Controls\ScaleControlHelper $scaleControlHelper, Controls\StreetViewControlHelper $streetViewControlHelper, Controls\ZoomControlHelper $zoomControlHelper, Overlays\MarkerHelper $markerHelper, Base\BoundHelper $boundHelper, Overlays\InfoWindowHelper $infoWindowHelper, Overlays\PolylineHelper $polylineHelper, Overlays\EncodedPolylineHelper $encodedPolylineHelper, Overlays\PolygonHelper $polygonHelper, Overlays\RectangleHelper $rectangleHelper, Overlays\CircleHelper $circleHelper, Overlays\GroundOverlayHelper $groundOverlayHelper, Events\EventManagerHelper $eventManagerHelper, $router) {
         $this->coordinateHelper = $coordinateHelper;
         $this->mapTypeIdHelper = $mapTypeIdHelper;
         $this->mapTypeControlHelper = $mapTypeControlHelper;
@@ -154,6 +157,7 @@ class MapHelper
         $this->circleHelper = $circleHelper;
         $this->groundOverlayHelper = $groundOverlayHelper;
         $this->eventManagerHelper = $eventManagerHelper;
+        $this->router = $router;
     }
 
     /**
@@ -162,12 +166,8 @@ class MapHelper
      * @param Ivory\GoogleMapBundle\Model\Map $map
      * @return string HTML output
      */
-    public function renderContainer(Map $map)
-    {
-        return sprintf('<div id="%s" style="width:%s;height:%s;"></div>'.PHP_EOL, 
-            $map->getHtmlContainerId(),
-            $map->getStylesheetOption('width'),
-            $map->getStylesheetOption('height')
+    public function renderContainer(Map $map) {
+        return sprintf('<div id="%s" style="width:%s;height:%s;"></div>' . PHP_EOL, $map->getHtmlContainerId(), $map->getStylesheetOption('width'), $map->getStylesheetOption('height')
         );
     }
 
@@ -177,18 +177,17 @@ class MapHelper
      * @param Ivory\GoogleMapBundle\Model\Map $map
      * @return string HTML output
      */
-    public function renderStylesheets(Map $map)
-    {
+    public function renderStylesheets(Map $map) {
         $html = array();
 
-        $html[] = '<style type="text/css">'.PHP_EOL;
-        $html[] = '#'.$map->getHtmlContainerId().'{'.PHP_EOL;
+        $html[] = '<style type="text/css">' . PHP_EOL;
+        $html[] = '#' . $map->getHtmlContainerId() . '{' . PHP_EOL;
 
-        foreach($map->getStylesheetOptions() as $option => $value)
-            $html[] = $option.':'.$value.';'.PHP_EOL;
+        foreach ($map->getStylesheetOptions() as $option => $value)
+            $html[] = $option . ':' . $value . ';' . PHP_EOL;
 
-        $html[] = '}'.PHP_EOL;
-        $html[] = '</style>'.PHP_EOL;
+        $html[] = '}' . PHP_EOL;
+        $html[] = '</style>' . PHP_EOL;
 
         return implode('', $html);
     }
@@ -199,25 +198,24 @@ class MapHelper
      * @param Ivory\GoogleMapBundle\Model\Map $map
      * @return string HTML output
      */
-    public function renderJavascripts(Map $map)
-    {
+    public function renderJavascripts(Map $map) {
         $html = array();
-        if ($map->getIncludeGMLib()) {
-            if ($map->isAsync()) {
-                    $html[] = sprintf('<script type="text/javascript" src="http://maps.google.com/maps/api/js?libraries=geometry&sensor=false&language=%s&callback=load_ivory_google_map"></script>'.PHP_EOL,
-                         $map->getLanguage()
-                     );
-            } else {
-            $html[] = sprintf('<script type="text/javascript" src="http://maps.google.com/maps/api/js?libraries=geometry&sensor=false&language=%s"></script>'.PHP_EOL,
-                $map->getLanguage()
-                );
-            }
+        if ($map->isGeolocable()) {
+            //TODO: include as an asset if possible
+            //asset = {{ asset('bundles/intermapplace/js/place.geolocation.js') }}
+            $html[] = '<script src="/bundles/intermapplace/js/place.geolocation.js" ></script>';
         }
-        
-        $html[] = '<script type="text/javascript">'.PHP_EOL;
 
-        if($map->isAsync()) {
-            $html[] = 'function load_ivory_google_map() {'.PHP_EOL;
+        if ($map->isAsync()) {
+            $gm_lib = sprintf('http://maps.google.com/maps/api/js?libraries=geometry&sensor=false&language=%s&callback=load_ivory_google_map', $map->getLanguage());
+        } else {
+            $gm_lib = sprintf('http://maps.google.com/maps/api/js?libraries=geometry&sensor=false&language=%s', $map->getLanguage());
+        }
+
+        $html[] = '<script type="text/javascript">' . PHP_EOL;
+
+        if ($map->isAsync()) {
+            $html[] = 'function load_ivory_google_map() {' . PHP_EOL;
         }
 
         $html[] = $this->renderMap($map);
@@ -230,47 +228,82 @@ class MapHelper
         $html[] = $this->renderCircles($map);
         $html[] = $this->renderGroundOverlays($map);
 
-        if($map->isAutoZoom())
+        if ($map->isAutoZoom())
             $html[] = $this->renderBound($map);
         else
             $html[] = $this->renderCenter($map);
-        
+
         $html[] = $this->renderGlobalVariables($map);
         $html[] = $this->renderEvents($map);
 
-        if($map->isAsync()) {
-            $html[] = '}'.PHP_EOL;
+        if ($map->isGeoLocable()) {
+            $html[] = $this->renderGeolocateFunction($map);
         }
-        
-        $html[] = '</script>'.PHP_EOL;
-        
+
+        if ($map->isAsync()) {
+            $html[] = '}' . PHP_EOL;
+        }
+
+        //load Google Map lib only if not already done
+        $html[] = 'if (typeof google == "undefined"){';
+        $html[] = 'var oScript = document.createElement("script");';
+        $html[] = 'oScript.type = "text/javascript";';
+        $html[] = sprintf('oScript.src = "%s";', $gm_lib);
+        $html[] = '$("body").append(oScript);';
+        $html[] = '}else{';
+        if ($map->isAsync()) {
+            $html[] = '$(document).ready(function(){load_ivory_google_map();});';
+        }
+        $html[] = '}';
+
+
+        $html[] = '</script>' . PHP_EOL;
+
         return implode('', $html);
     }
-    
+
+    /**
+     * Renders function to allow geolocation on map
+     *
+     * @return string HTML output
+     */
+    public function renderGeolocateFunction(Map $map) {
+        $html = array();
+        //ruta = {{path('address_on_map')}}
+
+
+        $html[] = sprintf('$(%s).geolocate({', $map->getJavascriptVariable());
+
+        if (count($map->getMarkers()) > 0) {
+            $html[] = sprintf('marker : %s,', current($map->getMarkers())->getJavascriptVariable());
+        }
+        $html[] = sprintf('info_window_route : "%s"', $this->router->generate('address_on_map'));
+        $html[] = "});";
+
+        return implode('', $html);
+    }
+
     /**
      * Renders the global map variables
      *
      * @return string HTML output
      */
-    public function renderGlobalVariables(Map $map)
-    {
+    public function renderGlobalVariables(Map $map) {
         $html = array();
-        
+
         $closableInfoWindows = array();
-        foreach($map->getInfoWindows() as $infoWindow)
-        {
-            if($infoWindow->isAutoClose())
+        foreach ($map->getInfoWindows() as $infoWindow) {
+            if ($infoWindow->isAutoClose())
                 $closableInfoWindows[] = $infoWindow->getJavascriptVariable();
         }
-        
-        foreach($map->getMarkers() as $marker)
-        {
-            if($marker->hasInfoWindow() && $marker->getInfoWindow()->isAutoClose())
+
+        foreach ($map->getMarkers() as $marker) {
+            if ($marker->hasInfoWindow() && $marker->getInfoWindow()->isAutoClose())
                 $closableInfoWindows[] = $marker->getInfoWindow()->getJavascriptVariable();
         }
-        
-        $html[] = sprintf('var closable_info_windows = Array(%s);'.PHP_EOL, implode(', ', $closableInfoWindows));
-        
+
+        $html[] = sprintf('var closable_info_windows = Array(%s);' . PHP_EOL, implode(', ', $closableInfoWindows));
+
         return implode('', $html);
     }
 
@@ -280,60 +313,54 @@ class MapHelper
      * @param Ivory\GoogleMapBundle\Model\Map $map
      * @return string HTML output
      */
-    public function renderMap(Map $map)
-    {
+    public function renderMap(Map $map) {
         $html = array();
-        
-        $mapControlJSONOptions = $this->renderMapControls($map);
-        
-        $mapOptions = $map->getMapOptions();
-        
-        $mapJSONOptions = '{"mapTypeId":'.$this->mapTypeIdHelper->render($mapOptions['mapTypeId']);
-        unset($mapOptions['mapTypeId']);
-        
-        if(!empty($mapControlJSONOptions))
-            $mapJSONOptions .= ','.$mapControlJSONOptions;
 
-        if($map->isAutoZoom() && isset($mapOptions['zoom']))
+        $mapControlJSONOptions = $this->renderMapControls($map);
+
+        $mapOptions = $map->getMapOptions();
+
+        $mapJSONOptions = '{"mapTypeId":' . $this->mapTypeIdHelper->render($mapOptions['mapTypeId']);
+        unset($mapOptions['mapTypeId']);
+
+        if (!empty($mapControlJSONOptions))
+            $mapJSONOptions .= ',' . $mapControlJSONOptions;
+
+        if ($map->isAutoZoom() && isset($mapOptions['zoom']))
             unset($mapOptions['zoom']);
-        
-        if(!empty($mapOptions))
-            $mapJSONOptions .= ','.substr(json_encode($mapOptions), 1);
+
+        if (!empty($mapOptions))
+            $mapJSONOptions .= ',' . substr(json_encode($mapOptions), 1);
         else
             $mapJSONOptions .= '}';
-        
-        $html[] = sprintf('%s = new google.maps.Map(document.getElementById("%s"), %s);'.PHP_EOL,
-            $map->getJavascriptVariable(),
-            $map->getHtmlContainerId(),
-            $mapJSONOptions
+
+        $html[] = sprintf('%s = new google.maps.Map(document.getElementById("%s"), %s);' . PHP_EOL, $map->getJavascriptVariable(), $map->getHtmlContainerId(), $mapJSONOptions
         );
-        
+
         return implode('', $html);
     }
-    
+
     /**
      * Renders the map controls
      *
      * @param Ivory\GoogleMapBundle\Model\Map $map
      * @return string Map controls
      */
-    protected function renderMapControls(Map &$map)
-    {
+    protected function renderMapControls(Map &$map) {
         $mapControls = array();
         $controlNames = array('MapTypeControl', 'OverviewMapControl', 'PanControl', 'RotateControl', 'ScaleControl', 'StreetViewControl', 'ZoomControl');
-        
-        foreach($controlNames as $controlName)
-        {
-            $controlHelper = lcfirst($controlName).'Helper';
-            
+
+        foreach ($controlNames as $controlName) {
+            $controlHelper = lcfirst($controlName) . 'Helper';
+
             $mapControlJSONOption = $this->renderMapControl($map, $controlName, $this->$controlHelper);
-            if(!empty($mapControlJSONOption))
+            if (!empty($mapControlJSONOption))
                 $mapControls[] = $mapControlJSONOption;
         }
-        
+
         return implode(',', $mapControls);
     }
-    
+
     /**
      * Renders the map control
      *
@@ -342,34 +369,28 @@ class MapHelper
      * @param mixed $controlHelper
      * @return string Map control
      */
-    protected function renderMapControl(Map &$map, $controlName, $controlHelper)
-    {
+    protected function renderMapControl(Map &$map, $controlName, $controlHelper) {
         $mapControl = array();
         $lcFirstControlName = lcfirst($controlName);
-        
-        if($map->hasMapOption($lcFirstControlName))
-        {
-            if($map->getMapOption($lcFirstControlName))
-            {
+
+        if ($map->hasMapOption($lcFirstControlName)) {
+            if ($map->getMapOption($lcFirstControlName)) {
                 $mapControl[] = sprintf('"%s":true', $lcFirstControlName);
-                
-                $hasControlMethod = 'has'.$controlName;
-                if($map->$hasControlMethod())
-                {
-                    $getControlMethod = 'get'.$controlName;
-                    
-                    $mapControl[] = sprintf('"%sOptions":%s',
-                        $lcFirstControlName,
-                        $controlHelper->render($map->$getControlMethod())
+
+                $hasControlMethod = 'has' . $controlName;
+                if ($map->$hasControlMethod()) {
+                    $getControlMethod = 'get' . $controlName;
+
+                    $mapControl[] = sprintf('"%sOptions":%s', $lcFirstControlName, $controlHelper->render($map->$getControlMethod())
                     );
                 }
             }
             else
                 $mapControl[] = sprintf('"%s":false', $lcFirstControlName);
-            
+
             $map->removeMapOption($lcFirstControlName);
         }
-        
+
         return implode(',', $mapControl);
     }
 
@@ -379,30 +400,24 @@ class MapHelper
      * @param Ivory\GoogleMapBundle\Model\Map $map
      * @return string HTML output
      */
-    public function renderCenter(Map $map)
-    {
-        return sprintf('%s.setCenter(%s);'.PHP_EOL,
-            $map->getJavascriptVariable(),
-            $this->coordinateHelper->render($map->getCenter())
+    public function renderCenter(Map $map) {
+        return sprintf('%s.setCenter(%s);' . PHP_EOL, $map->getJavascriptVariable(), $this->coordinateHelper->render($map->getCenter())
         );
     }
-    
+
     /**
      * Renders the map javascript bound
      *
      * @param Ivory\GoogleMapBundle\Model\Map $map
      * @return string HTML output
      */
-    public function renderBound(Map $map)
-    {
+    public function renderBound(Map $map) {
         $html = array();
-        
+
         $html[] = $this->boundHelper->render($map->getBound());
-        $html[] = sprintf('%s.fitBounds(%s);'.PHP_EOL,
-            $map->getJavascriptVariable(),
-            $map->getBound()->getJavascriptVariable()
+        $html[] = sprintf('%s.fitBounds(%s);' . PHP_EOL, $map->getJavascriptVariable(), $map->getBound()->getJavascriptVariable()
         );
-        
+
         return implode('', $html);
     }
 
@@ -412,25 +427,20 @@ class MapHelper
      * @param Ivory\GoogleMapBundle\Model\Map $map
      * @return string HTML output
      */
-    public function renderMarkers(Map $map)
-    {
+    public function renderMarkers(Map $map) {
         $html = array();
 
-        foreach($map->getMarkers() as $marker)
-        {
+        foreach ($map->getMarkers() as $marker) {
             $html[] = $this->markerHelper->render($marker, $map);
-            
-            if($marker->hasInfoWindow() && $marker->getInfoWindow()->isAutoOpen())
-            {
+
+            if ($marker->hasInfoWindow() && $marker->getInfoWindow()->isAutoOpen()) {
                 $event = new Event();
                 $event->setInstance($marker->getJavascriptVariable());
                 $event->setEventName($marker->getInfoWindow()->getOpenEvent());
-                $event->setHandle(sprintf('function(){for(var info_window in closable_info_windows){closable_info_windows[info_window].close();}%s}',
-                    str_replace(PHP_EOL, '', $this->infoWindowHelper->renderOpen($marker->getInfoWindow(), $map, $marker))
-                ));
+                $event->setHandle(sprintf('function(){for(var info_window in closable_info_windows){closable_info_windows[info_window].close();}%s}', str_replace(PHP_EOL, '', $this->infoWindowHelper->renderOpen($marker->getInfoWindow(), $map, $marker))
+                        ));
 
                 $map->getEventManager()->addEvent($event);
-
             }
         }
 
@@ -443,15 +453,13 @@ class MapHelper
      * @param Ivory\GoogleMapBundle\Model\Map $map
      * @return string HTML output
      */
-    public function renderInfoWindows(Map $map)
-    {
+    public function renderInfoWindows(Map $map) {
         $html = array();
 
-        foreach($map->getInfoWindows() as $infoWindow)
-        {
+        foreach ($map->getInfoWindows() as $infoWindow) {
             $html[] = $this->infoWindowHelper->render($infoWindow);
-            
-            if($infoWindow->isOpen())
+
+            if ($infoWindow->isOpen())
                 $html[] = $this->infoWindowHelper->renderOpen($infoWindow, $map);
         }
 
@@ -464,27 +472,25 @@ class MapHelper
      * @param Ivory\GoogleMapBundle\Model\Map $map
      * @return string HTML output
      */
-    public function renderPolylines(Map $map)
-    {
+    public function renderPolylines(Map $map) {
         $html = array();
 
-        foreach($map->getPolylines() as $polyline)
+        foreach ($map->getPolylines() as $polyline)
             $html[] = $this->polylineHelper->render($polyline, $map);
 
         return implode('', $html);
     }
-    
+
     /**
      * Renders the map javascript encoded polylines
      *
      * @param Ivory\GoogleMapBundle\Model\Map $map
      * @return string HTML output
      */
-    public function renderEncodedPolylines(Map $map)
-    {
+    public function renderEncodedPolylines(Map $map) {
         $html = array();
 
-        foreach($map->getEncodedPolylines() as $encodedPolyline)
+        foreach ($map->getEncodedPolylines() as $encodedPolyline)
             $html[] = $this->encodedPolylineHelper->render($encodedPolyline, $map);
 
         return implode('', $html);
@@ -496,11 +502,10 @@ class MapHelper
      * @param Ivory\GoogleMapBundle\Model\Map $map
      * @return string HTML output
      */
-    public function renderPolygons(Map $map)
-    {
+    public function renderPolygons(Map $map) {
         $html = array();
 
-        foreach($map->getPolygons() as $polygon)
+        foreach ($map->getPolygons() as $polygon)
             $html[] = $this->polygonHelper->render($polygon, $map);
 
         return implode('', $html);
@@ -512,11 +517,10 @@ class MapHelper
      * @param Ivory\GoogleMapBundle\Model\Map $map
      * @return string HTML output
      */
-    public function renderRectangles(Map $map)
-    {
+    public function renderRectangles(Map $map) {
         $html = array();
 
-        foreach($map->getRectangles() as $rectangle)
+        foreach ($map->getRectangles() as $rectangle)
             $html[] = $this->rectangleHelper->render($rectangle, $map);
 
         return implode('', $html);
@@ -528,11 +532,10 @@ class MapHelper
      * @param Ivory\GoogleMapBundle\Model\Map $map
      * @return string HTML output
      */
-    public function renderCircles(Map $map)
-    {
+    public function renderCircles(Map $map) {
         $html = array();
 
-        foreach($map->getCircles() as $circle)
+        foreach ($map->getCircles() as $circle)
             $html[] = $this->circleHelper->render($circle, $map);
 
         return implode('', $html);
@@ -544,24 +547,23 @@ class MapHelper
      * @param Ivory\GoogleMapBundle\Model\Map $map
      * @return string HTML output
      */
-    public function renderGroundOverlays(Map $map)
-    {
+    public function renderGroundOverlays(Map $map) {
         $html = array();
 
-        foreach($map->getGroundOverlays() as $groundOverlay)
+        foreach ($map->getGroundOverlays() as $groundOverlay)
             $html[] = $this->groundOverlayHelper->render($groundOverlay, $map);
 
         return implode('', $html);
     }
-    
+
     /**
      * Renders the map javascript events
      * 
      * @param Ivory\GoogleMapBundle\Model\Map $map
      * @return string HTML output
      */
-    public function renderEvents(Map $map)
-    {
+    public function renderEvents(Map $map) {
         return $this->eventManagerHelper->render($map->getEventManager());
     }
+
 }
